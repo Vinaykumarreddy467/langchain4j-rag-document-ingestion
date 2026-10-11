@@ -37,8 +37,8 @@ Use it as a command-line tool or as a library inside your own Java application.
 ## Project structure
 
 ```
-src/main/java/com/vinay/docextractor/
-├── DocumentExtractorApp.java          ← CLI entry point
+src/main/java/com/vinay/ragingestion/
+├── DocumentIngestionApp.java          ← CLI entry point
 ├── model/
 │   ├── DocumentType.java              ← Enum: PDF, DOCX, PPTX, etc.
 │   └── ExtractionResult.java          ← Result with text + metadata
@@ -67,26 +67,26 @@ src/main/java/com/vinay/docextractor/
 mvn clean package -DskipTests
 ```
 
-The Maven artifact keeps its original ID, so the JAR is named `langchain4j-doc-extractor-1.0.0.jar`.
+This produces `target/langchain4j-rag-document-ingestion-1.0.0.jar`.
 
 ### Run
 
 **Single file:**
 
 ```bash
-java -jar target/langchain4j-doc-extractor-1.0.0.jar /path/to/file.pdf
+java -jar target/langchain4j-rag-document-ingestion-1.0.0.jar /path/to/file.pdf
 ```
 
 **Directory (batch):**
 
 ```bash
-java -jar target/langchain4j-doc-extractor-1.0.0.jar /path/to/docs/
+java -jar target/langchain4j-rag-document-ingestion-1.0.0.jar /path/to/docs/
 ```
 
 **Extract and chunk for RAG:**
 
 ```bash
-java -jar target/langchain4j-doc-extractor-1.0.0.jar --chunk /path/to/file.pdf
+java -jar target/langchain4j-rag-document-ingestion-1.0.0.jar --chunk /path/to/file.pdf
 ```
 
 ### Run the tests

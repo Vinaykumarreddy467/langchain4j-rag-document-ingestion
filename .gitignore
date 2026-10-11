@@ -1,0 +1,18 @@
+# Build output
+target/
+bin/
+
+# Extracted text written by the CLI at runtime
+output/
+
+# IDE files
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
