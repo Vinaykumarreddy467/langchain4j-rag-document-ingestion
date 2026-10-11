@@ -1,35 +1,47 @@
-<<<<<<< HEAD
-# LangChain4j Document Extractor
+# LangChain4j RAG Document Ingestion
 
-A clean, production-ready Maven project that extracts text from multiple document
-formats using [LangChain4j](https://github.com/langchain4j/langchain4j) document parsers.
-Designed as a foundation for RAG (Retrieval-Augmented Generation) pipelines.
+A Java ingestion pipeline for RAG (Retrieval-Augmented Generation). It extracts text from eight
+document formats using [LangChain4j](https://github.com/langchain4j/langchain4j) document parsers,
+then splits the text into overlapping, token-sized chunks ready for embedding.
 
----
-
-## Supported Formats
-
-| Format | Extension | Parser Used               |
-|--------|-----------|---------------------------|
-| PDF    | `.pdf`    | ApachePdfBoxDocumentParser |
-| Word   | `.docx`   | ApachePoiDocumentParser    |
-| Word   | `.doc`    | ApachePoiDocumentParser    |
-| PowerPoint | `.pptx` | ApachePoiDocumentParser  |
-| Excel  | `.xlsx`   | ApachePoiDocumentParser    |
-| Plain Text | `.txt`  | TextDocumentParser        |
-| HTML   | `.html`, `.htm` | TextDocumentParser  |
-| Markdown | `.md`   | TextDocumentParser         |
+Use it as a command-line tool or as a library inside your own Java application.
 
 ---
 
-## Project Structure
+## Features
+
+- **Multi-format extraction.** PDF, Word (`.docx`, `.doc`), PowerPoint, Excel, plain text, HTML and Markdown.
+- **Batch mode.** Point it at a directory and it extracts every supported file, skips unsupported ones, and prints a summary.
+- **RAG-ready chunking.** Uses LangChain4j's recursive splitter: 512 tokens per chunk with a 50-token overlap by default, and both are configurable.
+- **Extraction metadata.** Each result carries the text, word count, file metadata and success or failure status.
+- **Saved output.** In single-file mode, the full extracted text is written to `output/<file-name>_extracted.txt`.
+- **Tested.** A JUnit 5 suite covers extraction, chunking, directory scanning and error handling.
+
+---
+
+## Supported formats
+
+| Format     | Extension       | Parser                       |
+|------------|-----------------|------------------------------|
+| PDF        | `.pdf`          | `ApachePdfBoxDocumentParser` |
+| Word       | `.docx`         | `ApachePoiDocumentParser`    |
+| Word       | `.doc`          | `ApachePoiDocumentParser`    |
+| PowerPoint | `.pptx`         | `ApachePoiDocumentParser`    |
+| Excel      | `.xlsx`         | `ApachePoiDocumentParser`    |
+| Plain text | `.txt`          | `TextDocumentParser`         |
+| HTML       | `.html`, `.htm` | `TextDocumentParser`         |
+| Markdown   | `.md`           | `TextDocumentParser`         |
+
+---
+
+## Project structure
 
 ```
 src/main/java/com/vinay/docextractor/
 ├── DocumentExtractorApp.java          ← CLI entry point
 ├── model/
 │   ├── DocumentType.java              ← Enum: PDF, DOCX, PPTX, etc.
-│   └── ExtractionResult.java         ← Result with text + metadata
+│   └── ExtractionResult.java          ← Result with text + metadata
 ├── parser/
 │   ├── DocumentParserFactory.java     ← Picks the right LangChain4j parser
 │   └── UnsupportedDocumentTypeException.java
@@ -42,42 +54,50 @@ src/main/java/com/vinay/docextractor/
 
 ---
 
-## Build & Run
+## Build and run
 
 ### Prerequisites
+
 - Java 17+
 - Maven 3.8+
 
-### Build fat JAR
+### Build the fat JAR
+
 ```bash
 mvn clean package -DskipTests
 ```
 
+The Maven artifact keeps its original ID, so the JAR is named `langchain4j-doc-extractor-1.0.0.jar`.
+
 ### Run
 
 **Single file:**
+
 ```bash
 java -jar target/langchain4j-doc-extractor-1.0.0.jar /path/to/file.pdf
 ```
 
 **Directory (batch):**
+
 ```bash
 java -jar target/langchain4j-doc-extractor-1.0.0.jar /path/to/docs/
 ```
 
-**Extract + chunk for RAG:**
+**Extract and chunk for RAG:**
+
 ```bash
 java -jar target/langchain4j-doc-extractor-1.0.0.jar --chunk /path/to/file.pdf
 ```
 
-### Run tests
+### Run the tests
+
 ```bash
 mvn test
 ```
 
 ---
 
-## Use as a Library
+## Use as a library
 
 ```java
 // Extract a single file
@@ -94,16 +114,19 @@ if (result.isSuccess()) {
 List<ExtractionResult> results = service.extractFromDirectory("/docs/");
 service.printSummary(results);
 
-// Chunk for RAG (512 tokens, 50 overlap)
+// Chunk for RAG (default: 512 tokens, 50 overlap)
 TextChunkingService chunker = new TextChunkingService();
 List<String> chunks = chunker.chunkToStrings(result.getExtractedText());
+
+// Or choose your own chunk size and overlap
+TextChunkingService customChunker = new TextChunkingService(256, 32);
 ```
 
 ---
 
-## Extending to Other LLMs (Ollama)
+## Extending to local LLMs (Ollama)
 
-You can pipe extracted text directly into your local Ollama models:
+You can pass extracted text straight to a local Ollama model:
 
 ```java
 // Add to pom.xml: langchain4j-ollama
@@ -116,10 +139,7 @@ String answer = model.generate("Summarise this document:\n\n" + result.getExtrac
 ```
 
 ---
-Note: another feature has been implemented in this project that is it saves the extracted text in the output folder in the project main folder.
 
-## LangChain4j Version
-`0.36.2` — stable release with full Apache PDFBox + POI parser support.
-=======
-# LangChain4j-Document-Extractor
-# LangChain4j-Document-Extractor
+## LangChain4j version
+
+`0.36.2`, a stable release with full Apache PDFBox and POI parser support.
